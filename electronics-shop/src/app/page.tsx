@@ -1,39 +1,52 @@
-'use client'
-
-import { useState, useEffect } from 'react'
 import Image from 'next/image'
 
-interface Product {
-  id: string
-  name: string
-  description: string
-  price: number
-  imageUrl?: string
-  createdAt: string
-}
+// Static product data for demo purposes
+const staticProducts = [
+  {
+    id: '1',
+    name: 'iPhone 15 Pro',
+    description: 'Latest flagship smartphone with titanium design and advanced camera system.',
+    price: 999.99,
+    imageUrl: '/api/placeholder/300/200'
+  },
+  {
+    id: '2',
+    name: 'MacBook Pro M3',
+    description: 'Professional laptop with M3 chip for ultimate performance.',
+    price: 1999.99,
+    imageUrl: '/api/placeholder/300/200'
+  },
+  {
+    id: '3',
+    name: 'Sony WH-1000XM5',
+    description: 'Industry-leading noise canceling wireless headphones.',
+    price: 399.99,
+    imageUrl: '/api/placeholder/300/200'
+  },
+  {
+    id: '4',
+    name: 'iPad Pro 12.9"',
+    description: 'Powerful tablet with M2 chip and Liquid Retina display.',
+    price: 1099.99,
+    imageUrl: '/api/placeholder/300/200'
+  },
+  {
+    id: '5',
+    name: 'Apple Watch Series 9',
+    description: 'Advanced health and fitness features in a sleek design.',
+    price: 429.99,
+    imageUrl: '/api/placeholder/300/200'
+  },
+  {
+    id: '6',
+    name: 'Samsung 4K TV',
+    description: 'Crystal clear 4K UHD smart television with HDR.',
+    price: 799.99,
+    imageUrl: '/api/placeholder/300/200'
+  }
+]
 
 export default function Home() {
-  const [products, setProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetchProducts()
-  }, [])
-
-  const fetchProducts = async () => {
-    try {
-      const response = await fetch('/api/products')
-      if (response.ok) {
-        const data = await response.json()
-        setProducts(data)
-      }
-    } catch (error) {
-      console.error('Failed to fetch products:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -50,7 +63,7 @@ export default function Home() {
     { name: 'Smart Home', icon: '🏠', count: '70+' },
   ]
 
-  const featuredProducts = products.slice(0, 6)
+  const featuredProducts = staticProducts.slice(0, 6)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -141,72 +154,40 @@ export default function Home() {
             </p>
           </div>
 
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white rounded-lg shadow-md p-6 animate-pulse">
-                  <div className="bg-gray-300 h-48 rounded-lg mb-4"></div>
-                  <div className="h-4 bg-gray-300 rounded mb-2"></div>
-                  <div className="h-4 bg-gray-300 rounded w-3/4 mb-4"></div>
-                  <div className="h-6 bg-gray-300 rounded w-1/2"></div>
-                </div>
-              ))}
-            </div>
-          ) : featuredProducts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredProducts.map((product) => (
-                <div key={product.id} className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden group">
-                  <div className="relative h-48 bg-gray-200">
-                    {product.imageUrl ? (
-                      <Image
-                        src={product.imageUrl}
-                        alt={product.name}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center h-full text-gray-400">
-                        <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                    )}
-                    <div className="absolute top-4 right-4">
-                      <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                        SALE
-                      </span>
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {featuredProducts.map((product) => (
+              <div key={product.id} className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden group">
+                <div className="relative h-48 bg-gray-200">
+                  <div className="flex items-center justify-center h-full text-gray-400">
+                    <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                    </svg>
                   </div>
-                  <div className="p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
-                      {product.name}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                      {product.description}
-                    </p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-2xl font-bold text-blue-600">
-                        {formatPrice(product.price)}
-                      </span>
-                      <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
-                        Add to Cart
-                      </button>
-                    </div>
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                      SALE
+                    </span>
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <div className="text-gray-400 mb-4">
-                <svg className="w-24 h-24 mx-auto" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 2L3 7v11a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V7l-7-5zM9 9V7a1 1 0 012 0v2h-2z" clipRule="evenodd" />
-                </svg>
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                    {product.name}
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                    {product.description}
+                  </p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-2xl font-bold text-blue-600">
+                      {formatPrice(product.price)}
+                    </span>
+                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
+                      Add to Cart
+                    </button>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">No Products Available</h3>
-              <p className="text-gray-500">Products will appear here once they're added to the database.</p>
-            </div>
-          )}
+            ))}
+          </div>
 
           <div className="text-center mt-12">
             <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors">
